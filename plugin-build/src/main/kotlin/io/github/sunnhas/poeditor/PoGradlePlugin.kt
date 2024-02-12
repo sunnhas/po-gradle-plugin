@@ -1,11 +1,13 @@
 package io.github.sunnhas.poeditor
 
 import io.github.sunnhas.poeditor.config.PoGradleExtension
+import io.github.sunnhas.poeditor.tasks.AnalyseTermsTasks
 import io.github.sunnhas.poeditor.tasks.DownloadExportTask
 import io.github.sunnhas.poeditor.tasks.ListProjectsTask
 import io.github.sunnhas.poeditor.util.capitalized
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSetContainer
 
 class PoGradlePlugin : Plugin<Project> {
 
@@ -40,6 +42,16 @@ class PoGradlePlugin : Plugin<Project> {
                         task.output.set(p.output)
                         task.fileNamePattern.set(p.fileNamePattern)
                     }
+                }
+            }
+
+            // Only if we have a plugin defining source sets to check files on
+            if (project.extensions.findByType(SourceSetContainer::class.java) != null) {
+                project.tasks.register("poAnalyse${p.name.capitalized()}", AnalyseTermsTasks::class.java) { task ->
+                    task.apiToken.set(config.apiToken)
+                    task.projectId.set(p.projectId)
+                    task.analysePattern.set(p.analysePattern)
+                    task.tags.set(p.tags)
                 }
             }
         }

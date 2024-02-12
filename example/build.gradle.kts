@@ -1,6 +1,7 @@
 import io.github.sunnhas.poeditor.config.Format
 
 plugins {
+    kotlin("jvm")
     id("io.github.sunnhas.po-gradle")
 }
 

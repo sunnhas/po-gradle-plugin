@@ -18,4 +18,7 @@ abstract class ProjectExtension {
 
     @get:Optional
     abstract val fileNamePattern: Property<String>
+
+    @get:Optional
+    abstract val analysePattern: Property<String>
 }
