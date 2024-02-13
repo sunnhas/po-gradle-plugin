@@ -2,6 +2,7 @@ package io.github.sunnhas.poeditor.config
 
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import java.io.File
 
@@ -14,4 +15,7 @@ abstract class ProjectExtension {
 
     @get:OutputDirectory
     abstract val output: Property<File>
+
+    @get:Optional
+    abstract val fileNamePattern: Property<String>
 }

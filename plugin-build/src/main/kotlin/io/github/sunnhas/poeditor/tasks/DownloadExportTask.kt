@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -29,11 +30,17 @@ abstract class DownloadExportTask : PoGradleTask() {
     @get:OutputDirectory
     abstract val output: Property<File>
 
+    @get:Input
+    @get:Optional
+    abstract val fileNamePattern: Property<String?>
+
     @TaskAction
     fun run() = runBlocking {
+        val fileNamePattern = (fileNamePattern.orNull ?: "translations_%s") + ".${format.get().ext}"
+
         createClient().use { client ->
             languages.get().forEach { lang ->
-                val targetFile = output.get().resolve("translations_$lang.${format.get().ext}")
+                val targetFile = output.get().resolve(fileNamePattern.format(lang))
 
                 val export = client.getExportLink(
                     projectId = projectId.get(),

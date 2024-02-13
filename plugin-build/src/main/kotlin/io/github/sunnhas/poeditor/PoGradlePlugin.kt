@@ -25,6 +25,7 @@ class PoGradlePlugin : Plugin<Project> {
                 task.format.set(p.format)
                 task.tags.set(p.tags)
                 task.output.set(p.output)
+                task.fileNamePattern.set(p.fileNamePattern)
             }
 
             project.afterEvaluate {
@@ -37,6 +38,7 @@ class PoGradlePlugin : Plugin<Project> {
                         task.format.set(p.format)
                         task.tags.set(p.tags)
                         task.output.set(p.output)
+                        task.fileNamePattern.set(p.fileNamePattern)
                     }
                 }
             }

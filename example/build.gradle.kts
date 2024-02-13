@@ -15,6 +15,7 @@ poGradle {
             languages.set(listOf("en", "da"))
             format.set(Format.JSON)
             output.set(projectDir.resolve("translations/all"))
+            fileNamePattern.set("some-translations_%s")
         }
 
         create("testTag") {
