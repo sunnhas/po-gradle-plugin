@@ -1,5 +1,6 @@
 package io.github.sunnhas.poeditor.config
 
+import org.gradle.api.file.FileTree
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Optional
@@ -21,4 +22,7 @@ abstract class ProjectExtension {
 
     @get:Optional
     abstract val analysePattern: Property<String>
+
+    @get:Optional
+    abstract val analyseSource: Property<FileTree>
 }

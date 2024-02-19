@@ -25,6 +25,8 @@ poGradle {
             languages.set(listOf("en", "da"))
             format.set(Format.PROPERTIES)
             output.set(projectDir.resolve("translations/test-tag"))
+
+            analyseSource.set(fileTree("src/main/kotlin/test"))
         }
     }
 }

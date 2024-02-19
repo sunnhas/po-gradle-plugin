@@ -6,8 +6,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
+import java.io.File
 
 abstract class AnalyseTermsTasks : PoGradleTask() {
 
@@ -15,11 +15,14 @@ abstract class AnalyseTermsTasks : PoGradleTask() {
     abstract val projectId: Property<Long>
 
     @get:Input
+    abstract val tags: ListProperty<String>
+
+    @get:Input
     @get:Optional
     abstract val analysePattern: Property<String>
 
     @get:Input
-    abstract val tags: ListProperty<String>
+    abstract val analyseSource: ListProperty<File>
 
     @TaskAction
     fun run() {
@@ -41,23 +44,19 @@ abstract class AnalyseTermsTasks : PoGradleTask() {
                 )
             }
 
-        val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
+        analyseSource.get().forEach { file ->
+            val content = file.readText().split("\n")
 
-        sourceSets.forEach { sourceSet ->
-            sourceSet.allSource.asFileTree.forEach { file ->
-                val content = file.readText().split("\n")
-
-                patterns.forEach { tc ->
-                    content.forEachIndexed { index, s ->
-                        tc.regex.findAll(s).forEach { result ->
-                            tc.result.add(
-                                Result(
-                                    file = file.name,
-                                    line = index + 1,
-                                    range = result.range,
-                                )
+            patterns.forEach { tc ->
+                content.forEachIndexed { index, s ->
+                    tc.regex.findAll(s).forEach { result ->
+                        tc.result.add(
+                            Result(
+                                file = file.name,
+                                line = index + 1,
+                                range = result.range,
                             )
-                        }
+                        )
                     }
                 }
             }
