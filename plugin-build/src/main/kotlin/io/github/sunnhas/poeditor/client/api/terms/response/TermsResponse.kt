@@ -15,5 +15,11 @@ data class TermsResponse(
         val updated: String?, // todo: Instant
         val tags: List<String>,
         val comment: String?,
-    )
+        val translation: Translation?,
+    ) {
+        @Serializable
+        data class Translation(
+            val content: String,
+        )
+    }
 }

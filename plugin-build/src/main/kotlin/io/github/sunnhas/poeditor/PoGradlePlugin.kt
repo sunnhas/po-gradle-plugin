@@ -5,6 +5,7 @@ import io.github.sunnhas.poeditor.config.ProjectExtension
 import io.github.sunnhas.poeditor.tasks.AnalyseTermsTasks
 import io.github.sunnhas.poeditor.tasks.DownloadExportTask
 import io.github.sunnhas.poeditor.tasks.ListProjectsTask
+import io.github.sunnhas.poeditor.tasks.UpdateTermsTask
 import io.github.sunnhas.poeditor.util.capitalized
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -23,11 +24,20 @@ class PoGradlePlugin : Plugin<Project> {
 
         config.projects.all { p ->
             project.registerDownloadTask("poDownload${p.name.capitalized()}", config.apiToken, p)
+            project.registerUpdateTask("poUpdate${p.name.capitalized()}", config.apiToken, p)
 
             project.afterEvaluate {
                 p.languages.get().forEach {
                     project.registerDownloadTask(
                         name = "poDownload${p.name.capitalized()}${it.capitalized()}",
+                        apiToken = config.apiToken,
+                        projectExtension = p,
+                    ) { task ->
+                        task.languages.set(listOf(it))
+                    }
+
+                    project.registerUpdateTask(
+                        name = "poUpdate${p.name.capitalized()}${it.capitalized()}",
                         apiToken = config.apiToken,
                         projectExtension = p,
                     ) { task ->
@@ -57,6 +67,25 @@ class PoGradlePlugin : Plugin<Project> {
         configureAction: (DownloadExportTask) -> Unit = {},
     ) {
         tasks.register(name, DownloadExportTask::class.java) { task ->
+            task.apiToken.set(apiToken)
+            task.projectId.set(projectExtension.projectId)
+            task.languages.set(projectExtension.languages)
+            task.format.set(projectExtension.format)
+            task.tags.set(projectExtension.tags)
+            task.output.set(projectExtension.output)
+            task.fileNamePattern.set(projectExtension.fileNamePattern)
+
+            configureAction(task)
+        }
+    }
+
+    private fun Project.registerUpdateTask(
+        name: String,
+        apiToken: Property<String>,
+        projectExtension: ProjectExtension,
+        configureAction: (UpdateTermsTask) -> Unit = {},
+    ) {
+        tasks.register(name, UpdateTermsTask::class.java) { task ->
             task.apiToken.set(apiToken)
             task.projectId.set(projectExtension.projectId)
             task.languages.set(projectExtension.languages)

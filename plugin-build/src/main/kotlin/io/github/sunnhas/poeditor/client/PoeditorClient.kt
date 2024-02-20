@@ -1,6 +1,7 @@
 package io.github.sunnhas.poeditor.client
 
 import io.github.sunnhas.poeditor.client.plugin.CallLoggerPlugin
+import io.github.sunnhas.poeditor.client.util.Json
 import io.github.sunnhas.poeditor.client.util.toFormData
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -25,13 +26,7 @@ internal class PoeditorClient(
 
     internal val client = HttpClient(CIO) {
         install(ContentNegotiation) {
-            json(
-                Json {
-                    namingStrategy = JsonNamingStrategy.SnakeCase
-                    ignoreUnknownKeys = true
-                    explicitNulls = false
-                }
-            )
+            json(Json)
         }
 
         install(CallLoggerPlugin) {
